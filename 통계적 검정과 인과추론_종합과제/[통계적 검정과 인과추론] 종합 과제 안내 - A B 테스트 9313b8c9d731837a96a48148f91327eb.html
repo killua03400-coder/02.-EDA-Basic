@@ -1,0 +1,803 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>[통계적 검정과 인과추론] 종합 과제 안내 - A/B 테스트 </title><meta name="data-notion-page-icon" content="✍🏻"/><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%E2%9C%8D%F0%9F%8F%BB%3C%2Ftext%3E%3C%2Fsvg%3E"/><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+	/* Paint a complete callout box on every PDF page fragment. */
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="9313b8c9-d731-837a-96a4-8148f91327eb" class="page sans" data-notion-page-icon="✍🏻"><header><div class="page-header-icon undefined"><span class="icon" data-emoji="✍🏻"></span></div><h1 class="page-title" dir="auto">[통계적 검정과 인과추론] 종합 과제 안내 - A/B 테스트 </h1><p class="page-description" dir="auto"></p></header><div class="page-body"><blockquote id="2483b8c9-d731-8316-ab0d-019161b4b464" class="" dir="auto">📌 지금까지 배운 <strong>가설 검정 → 효과 크기 → 인과 추론</strong>을 하나의 흐름으로 연결해 보는 개인 과제입니다. 캐글의 <strong>실제 A/B 테스트 데이터</strong>를 받아 직접 검정을 고르고, 수행하고, 그 결과를 <strong>“그래서 이걸 도입할까?”라는 의사결정 문장으로 옮기는 것</strong>이 목표입니다.</blockquote><h2 id="d863b8c9-d731-82ba-bfcf-81ca3e807358" class="" dir="auto">📋 과제 정보</h2><table id="6393b8c9-d731-83dc-b9a8-0139e2ac2a79" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="9fa3b8c9-d731-8353-b7d6-81b13df140a8" dir="ltr"><th id="WrJ[" class="simple-table-header-color simple-table-header" style="width:353.5px">항목</th><th id="w;uY" class="simple-table-header-color simple-table-header" style="width:353.5px">내용</th></tr></thead><tbody><tr id="1d23b8c9-d731-83fa-9313-81b00529b4fd" dir="ltr"><td id="WrJ[" class="" style="width:353.5px">형태</td><td id="w;uY" class="" style="width:353.5px">개인 과제</td></tr><tr id="7403b8c9-d731-831b-a18d-816b341b2e67" dir="ltr"><td id="WrJ[" class="" style="width:353.5px">소요 시간</td><td id="w;uY" class="" style="width:353.5px">약 4시간</td></tr><tr id="ddc3b8c9-d731-83e1-92aa-81714c5a6109" dir="ltr"><td id="WrJ[" class="" style="width:353.5px">최종 제출물</td><td id="w;uY" class="" style="width:353.5px">실행 가능한 Jupyter Notebook(<code>.ipynb</code>) 1개</td></tr><tr id="5eb3b8c9-d731-821a-aabe-011b5417eefe" dir="ltr"><td id="WrJ[" class="" style="width:353.5px">핵심 목표</td><td id="w;uY" class="" style="width:353.5px">검정을 “돌리기”가 아니라, <strong>어떤 검정을 왜 골랐는지 설명하기</strong></td></tr></tbody></table><hr id="4d73b8c9-d731-8298-ad07-010c02738e70" dir="auto"/><h2 id="f793b8c9-d731-8347-ac79-819ba5921473" class="" dir="auto">🚀 진행 단계</h2><h3 id="5a33b8c9-d731-8348-8ae2-017f178dc26e" class="" dir="auto">0️⃣ 데이터 선정</h3><blockquote id="c0b3b8c9-d731-82f3-9cfc-81387d5ed0d8" class="" dir="auto">각자 자유롭게 하나의 주제를 선정해주세요! <br/><mark class="highlight-purple_background" data-notion-highlight="purple_background"><strong><span style="border-bottom:0.05em solid">하단에 참고 데이터셋</span></strong></mark>을 참고합니다. 물론 <strong>자유 주제의 데이터셋으로 프로젝트 진행 가능</strong>합니다.</blockquote><p id="6df3b8c9-d731-8251-ab05-01e465ddb911" class="" dir="auto">
+</p><div id="65d3b8c9-d731-82b9-8a72-01962e298718" class="collection-content" dir="ltr"><h4 class="collection-title"></h4><div class="collection-content-wrapper"><table class="collection-content"><colgroup><col style="width:11.600928074245939%"/><col style="width:15.777262180974477%"/><col style="width:32.01856148491879%"/><col style="width:20.765661252900234%"/><col style="width:19.83758700696056%"/></colgroup><thead><tr><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>난이도</th><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>도메인</th><th><span class="icon property-icon"><img src="https://app.notion.com/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>데이터셋 </th><th><span class="icon property-icon"><img src="https://app.notion.com/icons/link_gray.svg" style="width:14px;height:14px;display:block"/></span>데이터셋 링크</th><th><span class="icon property-icon"><img src="https://app.notion.com/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>데이터셋 특징</th></tr></thead><tbody><tr id="d263b8c9-d731-83d0-91f8-814318423ea0"><td class="cell-OvX@"><span class="selected-value select-value-color-gray">하</span></td><td class="cell-wf_O"><span class="selected-value select-value-color-orange">커머스</span></td><td class="cell-title"><a href="https://app.notion.com/p/A-B-d263b8c9d73183d091f8814318423ea0?pvs=21" data-notion-page-id="d263b8c9-d731-83d0-91f8-814318423ea0" data-notion-space-id="75cf072b-4515-414b-9d34-8fe18ac0baac">랜딩 페이지 A/B 테스트 데이터셋</a></td><td class="cell-;eCI"><a href="https://www.kaggle.com/datasets/zhangluyuan/ab-testing" class="url-value">https://www.kaggle.com/datasets/zhangluyuan/ab-testing</a></td><td class="cell-@j|y">✔️ 요일별, 시간대별 분석 가능합니다.<br/>✔️ 주요 지표가 2개여서 추가적으로 컬럼 생성하셔도 좋습니다.</td></tr><tr id="f743b8c9-d731-8374-ae97-818e59e35b1d"><td class="cell-OvX@"><span class="selected-value select-value-color-gray">하</span></td><td class="cell-wf_O"><span class="selected-value select-value-color-orange">게임</span></td><td class="cell-title"><a href="https://app.notion.com/p/A-B-Cookie-Cats-f743b8c9d7318374ae97818e59e35b1d?pvs=21" data-notion-page-id="f743b8c9-d731-8374-ae97-818e59e35b1d" data-notion-space-id="75cf072b-4515-414b-9d34-8fe18ac0baac">모바일 게임 A/B 테스트 데이터셋 (Cookie Cats)</a></td><td class="cell-;eCI"><a href="https://www.kaggle.com/datasets/yufengsui/mobile-games-ab-testing" class="url-value">https://www.kaggle.com/datasets/yufengsui/mobile-games-ab-testing</a></td><td class="cell-@j|y">✔️ 유지율(리텐션) 분석을 할 수 있습니다.<br/>✔️ 이상치 처리를 연습할 수 있습니다.</td></tr><tr id="1073b8c9-d731-82b7-ad1f-81d15e8104c4"><td class="cell-OvX@"><span class="selected-value select-value-color-green">중</span></td><td class="cell-wf_O"><span class="selected-value select-value-color-pink">광고</span></td><td class="cell-title"><a href="https://app.notion.com/p/A-B-1073b8c9d73182b7ad1f81d15e8104c4?pvs=21" data-notion-page-id="1073b8c9-d731-82b7-ad1f-81d15e8104c4" data-notion-space-id="75cf072b-4515-414b-9d34-8fe18ac0baac">광고 A/B 테스트 데이터셋</a></td><td class="cell-;eCI"><a href="https://www.kaggle.com/datasets/osuolaleemmanuel/ad-ab-testing" class="url-value">https://www.kaggle.com/datasets/osuolaleemmanuel/ad-ab-testing</a></td><td class="cell-@j|y">✔️ 시간대별, 디바이스별 분석 가능합니다.<br/>✔️ 주요 지표가 1개여서 추가적으로 컬럼 생성하셔도 좋습니다.</td></tr><tr id="2623b8c9-d731-839a-b9e4-018f5b7fa9fc"><td class="cell-OvX@"><span class="selected-value select-value-color-green">중</span></td><td class="cell-wf_O"><span class="selected-value select-value-color-yellow">마케팅</span></td><td class="cell-title"><a href="https://app.notion.com/p/A-B-2623b8c9d731839ab9e4018f5b7fa9fc?pvs=21" data-notion-page-id="2623b8c9-d731-839a-b9e4-018f5b7fa9fc" data-notion-space-id="75cf072b-4515-414b-9d34-8fe18ac0baac">마케팅 캠페인 A/B 테스트 데이터셋</a></td><td class="cell-;eCI"><a href="https://www.kaggle.com/datasets/faviovaz/marketing-ab-testing" class="url-value">https://www.kaggle.com/datasets/faviovaz/marketing-ab-testing</a></td><td class="cell-@j|y">✔️ 요일별, 시간대별 분석 가능합니다.<br/>✔️ 주요 지표가 2개여서 추가적으로 컬럼 생성하셔도 좋습니다.</td></tr><tr id="9d63b8c9-d731-82fe-a1ad-8125d488fedc"><td class="cell-OvX@"><span class="selected-value select-value-color-purple">상</span></td><td class="cell-wf_O"><span class="selected-value select-value-color-yellow">마케팅</span><span class="selected-value select-value-color-pink">푸드</span></td><td class="cell-title"><a href="https://app.notion.com/p/Fast-Food-Marketing-Campaign-A-B-9d63b8c9d73182fea1ad8125d488fedc?pvs=21" data-notion-page-id="9d63b8c9-d731-82fe-a1ad-8125d488fedc" data-notion-space-id="75cf072b-4515-414b-9d34-8fe18ac0baac">Fast Food Marketing Campaign A/B 테스트 데이터셋</a></td><td class="cell-;eCI"><a href="https://www.kaggle.com/datasets/chebotinaa/fast-food-marketing-campaign-ab-test" class="url-value">https://www.kaggle.com/datasets/chebotinaa/fast-food-marketing-campaign-ab-test</a></td><td class="cell-@j|y">✔️ 다양한 지점 및 프로모션별 분석 가능합니다.</td></tr></tbody></table></div><br/><br/></div><p id="1923b8c9-d731-8347-b222-017225680c0e" class="" dir="auto">
+</p><h3 id="f203b8c9-d731-8380-b562-8138de23af12" class="" dir="auto">1️⃣ 데이터 점검 · 40분</h3><p id="bb63b8c9-d731-8335-a2a6-81cf87a45efe" class="" dir="auto">검정 결과가 아무리 그럴듯해도, 데이터가 오염돼 있으면 전부 무의미합니다. <strong>검정보다 먼저</strong> 합니다.</p><ul id="b4a3b8c9-d731-82bf-97de-0119734f725a" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>기본 확인</strong> — 행 수, 컬럼, 자료형, 결측치</li></ul><ul id="74e3b8c9-d731-83ce-97fb-81a3f55024b8" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>중복 확인</strong> — 같은 사용자 ID가 두 번 이상 등장하는가?</li></ul><ul id="0ce3b8c9-d731-8315-83b6-81d337e280d0" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>배정 일관성</strong> — 처치 라벨이 서로 어긋난 행은 없는가?<ul id="9aa3b8c9-d731-83c8-ae98-016d8d64e458" class="bulleted-list" dir="auto"><li style="list-style-type:circle">예: <code>group</code>은 control인데 <code>landing_page</code>는 new_page인 경우</li></ul></li></ul><ul id="f3f3b8c9-d731-83b7-97ea-0148977c235e" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>SRM 점검</strong> — 배정 비율이 의도대로인가?</li></ul><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="2063b8c9-d731-839f-b48c-01570af9b37b" class="code code-wrap" data-notion-code-syntax="python"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">from scipy import stats
+n_a, n_b = 12345, 12000                        # 실제 두 그룹의 크기
+stats.chisquare([n_a, n_b], [(n_a + n_b) / 2] * 2)</code></pre><blockquote id="4193b8c9-d731-83e8-8c04-0149f88041dc" class="" dir="auto">💡 <strong>SRM(Sample Ratio Mismatch)</strong> — 50:50으로 나눴다면 그룹 크기도 대략 반반이어야 합니다. 한쪽이 유독 많으면 배정 로직에 버그가 있다는 신호입니다.<br/>여기서는 <strong>p가 커야 정상</strong>입니다(= 의도한 비율과 다르지 않다). 평소 검정과 해석 방향이 반대이니 주의하세요.</blockquote><blockquote id="aa33b8c9-d731-83a4-9f5b-81699512ca70" class="" dir="auto">⚠️ 제거하거나 유지한 데이터가 있다면 <strong>왜 그렇게 했는지 한 줄로 메모</strong>합니다. 정제 전후 행 수도 함께 적어 두세요.</blockquote><p id="41b3b8c9-d731-8363-b082-014d2d94a7d5" class="" dir="auto">
+</p><h3 id="7983b8c9-d731-835f-bcda-01d1adccd355" class="" dir="auto">2️⃣ 질문과 가설 정하기 · 20분</h3><ul id="1573b8c9-d731-8289-964a-014b32223e2e" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>알고 싶은 것을 한 문장으로</strong> 적습니다.<ul id="9ff3b8c9-d731-83cb-9b27-0112c52f23a7" class="bulleted-list" dir="auto"><li style="list-style-type:circle">예: “관문을 뒤로 미루면 유저가 더 오래 남을까?”</li></ul></li></ul><ul id="c7b3b8c9-d731-8385-bc75-812bcdd98bcb" class="bulleted-list" dir="auto"><li style="list-style-type:disc">귀무가설 <span data-notion-inline-equation="H_0" class="notion-text-equation-token" contenteditable="false"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> 와 대립가설 <span data-notion-inline-equation="H_1" class="notion-text-equation-token" contenteditable="false"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> 을 <strong>문장으로</strong> 씁니다.</li></ul><ul id="2113b8c9-d731-8287-a3d3-81c793b14d26" class="bulleted-list" dir="auto"><li style="list-style-type:disc">유의수준 <span data-notion-inline-equation="\alpha" class="notion-text-equation-token" contenteditable="false"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span></span></span></span></span> 를 정하고, <strong>단측/양측</strong>을 결정합니다.</li></ul><blockquote id="40a3b8c9-d731-8278-af58-0175241eb359" class="" dir="auto">⚠️ <strong>데이터를 들여다보기 전에 정합니다.</strong> 결과를 보고 나서 가설을 바꾸는 것이 p-해킹입니다(9-10장 문제 3에서 시뮬레이션해 본 그것). 여기서 정한 것을 끝까지 유지하세요.</blockquote><h3 id="75a3b8c9-d731-83aa-8a99-81fc76ddc87e" class="" dir="auto">3️⃣ 검정 고르기 · 25분 · ⭐가장 중요</h3><p id="3a43b8c9-d731-8229-8bba-0169519246c7" class="" dir="auto">아래 세 질문에 답하면 검정이 거의 자동으로 정해집니다.</p><ol type="1" id="ae63b8c9-d731-8240-9c6c-811eefe7c321" class="numbered-list" start="1" dir="auto"><li>성공 지표가 <strong>비율</strong>(전환·재접속 여부)인가, <strong>연속형</strong>(매출·라운드 수)인가?</li></ol><ol type="1" id="8a73b8c9-d731-83b9-b7e8-811725429d04" class="numbered-list" start="2" dir="auto"><li>비교할 집단이 <strong>2개</strong>인가, <strong>3개 이상</strong>인가?</li></ol><ol type="1" id="dca3b8c9-d731-820e-bc8d-811ef0d4879c" class="numbered-list" start="3" dir="auto"><li>연속형이라면 — <strong>정규성</strong>과 <strong>등분산</strong>은 그럴듯한가?</li></ol><table id="0c83b8c9-d731-821d-85fe-01a1c44ca5b8" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="edf3b8c9-d731-8269-b5b1-01ac4f1125ac" dir="ltr"><th id="Ge^G" class="simple-table-header-color simple-table-header">상황</th><th id="kaOS" class="simple-table-header-color simple-table-header">검정</th></tr></thead><tbody><tr id="7343b8c9-d731-838b-aca5-015ae728c67f" dir="ltr"><td id="Ge^G" class="">비율 · 2집단</td><td id="kaOS" class="">카이제곱 독립성 검정 (또는 두 비율 검정)</td></tr><tr id="0623b8c9-d731-82c0-b3e5-01970d50f176" dir="ltr"><td id="Ge^G" class="">연속형 · 2집단 · 정규성 OK</td><td id="kaOS" class="">2표본 t-검정</td></tr><tr id="6c43b8c9-d731-8364-a668-017030036fc6" dir="ltr"><td id="Ge^G" class="">연속형 · 2집단 · 정규성 위반</td><td id="kaOS" class="">Mann-Whitney U</td></tr><tr id="26f3b8c9-d731-82e7-b141-013a411abca4" dir="ltr"><td id="Ge^G" class="">연속형 · 3집단 이상</td><td id="kaOS" class="">일원 ANOVA → (유의하면) Tukey 사후검정</td></tr></tbody></table><ul id="e0f3b8c9-d731-82e5-9ea8-81c87b8d2d77" class="bulleted-list" dir="auto"><li style="list-style-type:disc">정규성은 히스토그램·Q-Q plot으로 <strong>눈으로 먼저</strong> 보고, Shapiro-Wilk로 확인합니다.</li></ul><ul id="4363b8c9-d731-833d-ac40-01beaa03e215" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>“나는 ○○ 검정을 골랐다. 왜냐하면 …”</strong> 을 한 문단으로 적습니다.</li></ul><blockquote id="7933b8c9-d731-828d-96df-01c62d1a0de7" class="" dir="auto">⚠️ 이 문단이 없으면 검정을 맞게 했어도 과제의 핵심을 놓친 것입니다. <strong>코드보다 이 문단이 중요합니다.</strong></blockquote><h3 id="8193b8c9-d731-831e-9e88-0114f4056e58" class="" dir="auto">4️⃣ 검정 수행하고 3종 세트로 보고 · 50분</h3><p id="2b73b8c9-d731-8398-91ce-81d0ef7b022f" class="" dir="auto">검정을 실행하고, <strong>p값 하나로 끝내지 않고</strong> 세 가지를 함께 적습니다.</p><table id="bc33b8c9-d731-82f3-92c5-81585553a789" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="47b3b8c9-d731-82fb-b7e8-0134eac76317" dir="ltr"><th id="|Ob&gt;" class="simple-table-header-color simple-table-header">무엇을</th><th id="|B]V" class="simple-table-header-color simple-table-header">왜</th></tr></thead><tbody><tr id="17e3b8c9-d731-8300-beeb-01d3a26311a6" dir="ltr"><td id="|Ob&gt;" class="">① <strong>점추정</strong> (차이)</td><td id="|B]V" class="">얼마나 차이 나는가</td></tr><tr id="f9c3b8c9-d731-8349-80d2-813a8c59464d" dir="ltr"><td id="|Ob&gt;" class="">② <strong>95% 신뢰구간</strong></td><td id="|B]V" class="">그 추정이 얼마나 불확실한가</td></tr><tr id="f6d3b8c9-d731-8335-be77-01b312936b16" dir="ltr"><td id="|Ob&gt;" class="">③ <strong>효과 크기</strong></td><td id="|B]V" class="">그 차이가 큰 차이인가</td></tr></tbody></table><ul id="ee73b8c9-d731-82d8-8ba0-810e4851b830" class="bulleted-list" dir="auto"><li style="list-style-type:disc">연속형 2집단 → <strong>Cohen’s d</strong> (9-10장 문제 1에서 계산해 봤습니다)</li></ul><ul id="2e73b8c9-d731-835c-9979-81147024c697" class="bulleted-list" dir="auto"><li style="list-style-type:disc">3집단 ANOVA → <strong>η²</strong></li></ul><ul id="fc33b8c9-d731-825c-89ac-814a098b2ab8" class="bulleted-list" dir="auto"><li style="list-style-type:disc">비율 → <strong>절대 차이(%p)</strong> 와 <strong>상대 차이(배수)</strong> 를 <strong>둘 다</strong></li></ul><p id="3ab3b8c9-d731-833e-bde3-8130f5fee4c2" class="" dir="auto"><strong>보고 문장 예시</strong></p><blockquote id="c8b3b8c9-d731-8323-873b-01e780879505" class="" dir="auto">새 페이지의 전환율이 더 높았다(12.4% vs 11.9%).<br/><code>+0.52%p, χ²(1) = 4.31, p = .038, Cramér&#x27;s V = 0.02</code></blockquote><blockquote id="fc53b8c9-d731-8371-8a1b-01f8b40ec9d7" class="" dir="auto">💡 <strong>Tip</strong> — “16% 상승!”과 “1.8%p 상승”은 <strong>같은 결과</strong>입니다. 상대 차이만 쓰면 과장돼 보이고 절대 차이만 쓰면 작아 보입니다. 정직하게 둘 다 적으세요.</blockquote><h3 id="8643b8c9-d731-8302-8f90-81f0c722e69e" class="" dir="auto">5️⃣ 한 걸음 더 · 60분 · 아래 중 <strong>1개 선택</strong></h3><ul id="5263b8c9-d731-8280-8f20-01488d77b67f" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>A. 이 실험은 효과를 잡을 ’힘’이 있었나</strong><ul id="8513b8c9-d731-8207-8d61-812a79e4f264" class="bulleted-list" dir="auto"><li style="list-style-type:circle">80% 검정력으로 +1%p를 잡으려면 그룹당 몇 명이 필요한가? (9-10장 문제 2)</li></ul><ul id="7843b8c9-d731-827f-93bb-816008c7dc38" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><strong>MDE</strong> — 지금 표본으로 잡을 수 있는 <strong>가장 작은 효과</strong>는? → <code>solve_power()</code>에 <code>nobs1=</code>을 주고 <code>effect_size</code>를 비워 풀면 됩니다.</li></ul><ul id="8b83b8c9-d731-8348-8a71-0179d93789a7" class="bulleted-list" dir="auto"><li style="list-style-type:circle">결론: “우리 표본은 ○%p 이상의 효과만 볼 수 있었다”</li></ul></li></ul><ul id="7753b8c9-d731-8256-9512-0168cdaa56d0" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>B. 가정이 깨졌다면</strong><ul id="3293b8c9-d731-83d8-b393-81adc6a984c0" class="bulleted-list" dir="auto"><li style="list-style-type:circle">분포 진단(히스토그램·Q-Q·이상치) 후, <code>t-검정</code> / <code>Mann-Whitney U</code> / <code>부트스트랩 신뢰구간</code> 결과를 비교</li></ul><ul id="0c03b8c9-d731-8399-b051-8136d4f677a8" class="bulleted-list" dir="auto"><li style="list-style-type:circle">이상치를 빼기 전과 후로 결론이 바뀌는지 확인</li></ul></li></ul><ul id="5ea3b8c9-d731-82d6-9fd8-010fef4cd2cf" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>C. 유의한 결과는 ‘만들어질’ 수 있다</strong> (9-10장 문제 3)<ul id="eaf3b8c9-d731-834e-8e44-01a25a036a67" class="bulleted-list" dir="auto"><li style="list-style-type:circle">요일·시간대 등으로 세그먼트를 쪼개 검정을 반복 → 우연히 유의해지는 게 몇 개인가?</li></ul><ul id="1343b8c9-d731-83f8-9578-8174cc51e206" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><code>multipletests()</code>로 Bonferroni 또는 BH 보정 전후 비교</li></ul></li></ul><ul id="1593b8c9-d731-8222-9423-81ef3acda9e0" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>D. 비용까지 따져 보기</strong><ul id="0d93b8c9-d731-8242-8621-01b62da34976" class="bulleted-list" dir="auto"><li style="list-style-type:circle">전환 1건의 가치와 도입 비용을 가정하고, <strong>얼마 이상 올라야 도입할 만한지</strong> 계산</li></ul></li></ul><blockquote id="c083b8c9-d731-83d4-9e61-0144a9977759" class="" dir="auto">💡 <strong>Tip</strong> — 하나를 깊게 하는 편이 둘을 얕게 하는 것보다 낫습니다. 시간이 남으면 두 번째를 시도하세요.</blockquote><h3 id="7153b8c9-d731-83f9-b8a5-010114fd7376" class="" dir="auto">6️⃣ 의사결정으로 마무리 · 25분</h3><p id="ca93b8c9-d731-835a-958e-813477574cb4" class="" dir="auto">노트북 맨 아래에 아래 흐름이 보이도록 텍스트 셀로 정리합니다.</p><ol type="1" id="b483b8c9-d731-83c7-8240-81ad7a5aabd5" class="numbered-list" start="1" dir="auto"><li><strong>질문과 가설</strong> — 무엇을 알고 싶었나</li></ol><ol type="1" id="5f83b8c9-d731-837b-bd7d-81cc86bb9967" class="numbered-list" start="2" dir="auto"><li><strong>데이터 위생 점검</strong> — 무엇을 어떻게 정제했나</li></ol><ol type="1" id="69a3b8c9-d731-8267-8785-81449b9c70cd" class="numbered-list" start="3" dir="auto"><li><strong>검정 선택 근거</strong> — 왜 그 검정인가</li></ol><ol type="1" id="0883b8c9-d731-82e4-bdeb-819844b0483c" class="numbered-list" start="4" dir="auto"><li><strong>결과</strong> — 점추정 · 신뢰구간 · 효과 크기</li></ol><ol type="1" id="5393b8c9-d731-8318-acf1-011fb79cf118" class="numbered-list" start="5" dir="auto"><li><strong>의사결정</strong> — <strong>출시 / 보류 / 데이터 추가 수집</strong> 중 하나 + 근거</li></ol><ol type="1" id="2a03b8c9-d731-8350-b849-01c7733be5b5" class="numbered-list" start="6" dir="auto"><li><strong>한계</strong> — 이 결론이 기대는 가정, 이 데이터로 알 수 없는 것</li></ol><blockquote id="b003b8c9-d731-83fd-ad17-81be2fb016f8" class="" dir="auto">⚠️ <strong>6번을 비우지 마세요.</strong> “무조건 확실합니다”보다 <strong>“이 조건에서 이만큼 말할 수 있습니다”</strong> 가 훨씬 신뢰받는 보고입니다.</blockquote><hr id="4413b8c9-d731-82da-b340-81503e138db5" dir="auto"/><h2 id="3603b8c9-d731-82c8-8644-01fd2e0b612a" class="" dir="auto">⚖️ 반드시 지켜야 할 점</h2><blockquote id="39e3b8c9-d731-82fb-b0c9-01e3c29658a0" class="" dir="auto">🚨 A/B 테스트는 <strong>결과를 만들어 내기 쉬운</strong> 분석입니다. 아래는 실무에서도 사고가 나는 지점들입니다.</blockquote><ul id="dee3b8c9-d731-83fc-af9e-019a214e4383" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>가설은 데이터를 보기 전에 정합니다.</strong> 결과를 본 뒤 가설·검정·유의수준을 바꾸지 않습니다.</li></ul><ul id="c1b3b8c9-d731-836f-b6fe-81e4ea4e7836" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>검정보다 데이터 위생이 먼저입니다.</strong> 중복·배정 불일치·SRM을 확인하지 않은 p값은 의미가 없습니다.</li></ul><ul id="6623b8c9-d731-83b0-a9bf-0151ae3e8609" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>세그먼트를 여러 개 보면 보정합니다.</strong> 20개로 쪼개면 그중 하나쯤은 우연히 유의해집니다.</li></ul><ul id="fea3b8c9-d731-8263-afaa-010307dd663c" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>결과가 유의해질 때까지 표본을 더 모으지 않습니다.</strong> (peeking — 거짓 양성이 급증합니다)</li></ul><ul id="7a03b8c9-d731-8279-ba07-01b26d999e29" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>사후 검정력(post-hoc power)은 계산하지 않습니다.</strong> 관측된 p값을 다시 쓴 것일 뿐입니다. 대신 <strong>MDE</strong>를 구하세요.</li></ul><hr id="b7c3b8c9-d731-83a5-b097-81fdbcbe9e5e" dir="auto"/><h2 id="e593b8c9-d731-8397-9749-01477d067845" class="" dir="auto">🧠 결과를 다룰 때 생각해야 할 점</h2><blockquote id="6a73b8c9-d731-83dd-8efb-81f17d8d11fb" class="" dir="auto">검정을 돌리는 것을 넘어, <strong>결과를 비판적으로 읽는 태도</strong>를 함께 연습합니다.</blockquote><h4 id="5ae3b8c9-d731-825c-a7b2-01a5e911f173" class="" dir="auto">📉 “유의하다”와 “중요하다”는 다릅니다</h4><ul id="c553b8c9-d731-83a7-a749-814ba792ebdc" class="bulleted-list" dir="auto"><li style="list-style-type:disc">표본이 크면 <strong>아주 작은 차이도</strong> p &lt; 0.05가 나옵니다.</li></ul><ul id="92e3b8c9-d731-8267-8485-81abfa565314" class="bulleted-list" dir="auto"><li style="list-style-type:disc">전환율이 11.0% → 11.2%로 올랐다면 통계적으로는 유의할 수 있지만, 그 0.2%p를 위해 드는 비용이 더 크면 도입할 이유가 없습니다.</li></ul><ul id="28f3b8c9-d731-829f-ad59-8168605cebfb" class="bulleted-list" dir="auto"><li style="list-style-type:disc">그래서 <strong>p값 옆에 항상 효과 크기</strong>를 적습니다.</li></ul><h4 id="e0c3b8c9-d731-82a1-b264-01b34cba9d7a" class="" dir="auto">🧐 “효과가 없다”와 “확인할 힘이 없었다”는 다릅니다</h4><ul id="2753b8c9-d731-82db-a6a4-0162b09b2409" class="bulleted-list" dir="auto"><li style="list-style-type:disc">p ≥ 0.05는 <strong>“차이가 없다는 증명”이 아니라 “차이가 있다는 증거가 부족하다”</strong> 입니다.</li></ul><ul id="21d3b8c9-d731-82c9-9161-013b70d1be14" class="bulleted-list" dir="auto"><li style="list-style-type:disc">표본이 작아서 못 잡은 것일 수 있습니다. <strong>MDE</strong>를 구하면 둘을 구분할 수 있습니다.</li></ul><ul id="76b3b8c9-d731-83af-93f5-811f25551c76" class="bulleted-list" dir="auto"><li style="list-style-type:disc">유의하지 않은 결과가 나와도 과제를 망친 것이 아닙니다. <strong>오히려 좋은 재료입니다.</strong></li></ul><h4 id="8a13b8c9-d731-8346-ad8e-81d366b8ef94" class="" dir="auto">🧹 데이터를 “그냥” 지우지 않기</h4><ul id="c8d3b8c9-d731-82a8-a916-01aee3a13447" class="bulleted-list" dir="auto"><li style="list-style-type:disc">이상치를 무조건 지우는 것이 정답은 아닙니다. <strong>왜 이 값이 튀는지</strong> 잠깐 생각합니다.</li></ul><ul id="82d3b8c9-d731-82f2-ab22-01312f9f0a3f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">실제로 의미 있는 값일 수도 있습니다. (예: 유난히 오래 플레이한 헤비 유저)</li></ul><ul id="c213b8c9-d731-833b-9242-81c0c847118a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">지웠다면 <strong>지운 전후로 결론이 바뀌는지</strong> 확인하고, 그 사실을 적습니다.</li></ul><h4 id="2da3b8c9-d731-82bf-bc35-81b0fe10fcfa" class="" dir="auto">🔁 재현 가능하게 만들기</h4><ul id="6fd3b8c9-d731-8203-8557-01fe99106815" class="bulleted-list" dir="auto"><li style="list-style-type:disc">노트북을 처음부터 끝까지 다시 실행해도 같은 결과가 나오도록 정리합니다.</li></ul><ul id="74b3b8c9-d731-82bd-9a90-014470a9cd10" class="bulleted-list" dir="auto"><li style="list-style-type:disc">난수를 쓴다면 <code>random_state</code>·<code>np.random.seed()</code>로 고정합니다.</li></ul><ul id="8f73b8c9-d731-83cb-a076-01798b9b5f0d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">데이터 출처(캐글 링크)와 내려받은 날짜를 적어 둡니다.</li></ul><hr id="6c43b8c9-d731-83c5-af2b-018ceb4534ad" dir="auto"/><h2 id="8e53b8c9-d731-834c-9f38-0104af73bc89" class="" dir="auto">✅ 최종 제출물 체크리스트</h2><ul id="6e43b8c9-d731-8324-b9b5-81e250039e57" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">데이터 위생 점검(중복·배정 일관성·SRM)을 했고, 정제 전후 행 수를 적었는가?</span><div class="indented"></div></li></ul><ul id="64b3b8c9-d731-8254-b052-01b7710f55eb" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">분석 질문과 <span data-notion-inline-equation="H_0" class="notion-text-equation-token" contenteditable="false"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> / <span data-notion-inline-equation="H_1" class="notion-text-equation-token" contenteditable="false"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> 이 문장으로 적혀 있는가?</span><div class="indented"></div></li></ul><ul id="8fb3b8c9-d731-8244-897d-014a6b9488ba" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"><strong>왜 그 검정을 골랐는지</strong> 한 문단으로 설명했는가?</span><div class="indented"></div></li></ul><ul id="e663b8c9-d731-82b3-8028-81eefd6c04f1" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">정규성·등분산 등 검정의 가정을 점검했는가?</span><div class="indented"></div></li></ul><ul id="7d73b8c9-d731-83c1-bc8f-017f42e04974" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">점추정 · 95% 신뢰구간 · 효과 크기를 <strong>함께</strong> 보고했는가?</span><div class="indented"></div></li></ul><ul id="c813b8c9-d731-8281-b090-81eda4a46308" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">비율 지표라면 절대 차이와 상대 차이를 둘 다 적었는가?</span><div class="indented"></div></li></ul><ul id="f6a3b8c9-d731-831f-bbbc-81fda90335e4" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">5단계(한 걸음 더)에서 1개를 선택해 수행했는가?</span><div class="indented"></div></li></ul><ul id="6a73b8c9-d731-8397-b3d7-01847c38e475" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"><strong>출시 / 보류 / 추가 수집</strong> 중 하나를 근거와 함께 제안했는가?</span><div class="indented"></div></li></ul><ul id="8813b8c9-d731-8294-a0fc-01c50040a7c6" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">결론의 한계와 가정을 적었는가?</span><div class="indented"></div></li></ul><ul id="66e3b8c9-d731-82fa-b42b-8177ac6ba20c" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">노트북을 처음부터 다시 실행해도 오류 없이 돌아가는가?</span><div class="indented"></div></li></ul><hr id="3a03b8c9-d731-83b9-bebd-816824ae411c" dir="auto"/><p id="ba93b8c9-d731-8343-9ffc-012b569878cf" class="" dir="auto">© 2026 모두의연구소(MODULABS). 기획·제작: 교육퍼실리테이터팀 이진영 (<a href="mailto:jy.lee@modulabs.co.kr">jy.lee@modulabs.co.kr</a>)</p><p id="0143b8c9-d731-8285-b38f-0198974b7ac1" class="" dir="auto">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
